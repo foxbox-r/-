@@ -39,7 +39,7 @@ hr{margin:10px;}
 .not_now{}
 
 /* time_box */
-#time_box{position:fixed;width:250px;height:130px;border:3px solid white;right:20px;bottom:20px;color:white;}
+#time_box{position:absolute;width:250px;height:130px;border:3px solid white;right:20px;bottom:20px;color:white;}
 #time_box>h2{text-align:center;line-height:65px;}
 #time_box #time_box_date{font-size:2rem;}
 #time_box #time_box_time{font-size:1.8rem;}
@@ -55,3 +55,10 @@ hr{margin:10px;}
 #detail_checkBox~label::after{content:"자세히 보기";color:darkblue;font-weight:bold;}
 #detail_checkBox:checked~label::after{content:"자세히 보기 닫기"}
 #detail_checkBox:checked~#weather_detail_box{height:90px;}
+
+/* time_table */
+#time_table_box{display:flex;flex-direction:column;height:70%;}
+.time_table_item_box{flex-grow:1;padding:20px;border-bottom:2px solid black;}
+
+/* bold */
+.bold{font-weight:bold;}

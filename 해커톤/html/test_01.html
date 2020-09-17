@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>MD</title>
     <link rel="stylesheet" href="../css/test_01.css" />
 </head>
 <body>
@@ -40,6 +40,14 @@
                 <button class="get_button" id="scheduleButton">
                     schedule<br />
                     (학교일정)
+                </button>
+            </div>
+        </div>
+        <div class="child-wrapper" id="wrapper_schedule">
+            <div id="time_table">
+                <button class="get_button" id="timeTableButton">
+                    time table<br />
+                    (시간표)
                 </button>
             </div>
         </div>
@@ -86,9 +94,11 @@
         const weather = document.querySelector("#weather");
         const menu = document.querySelector("#menu"); 
         const schedule = document.querySelector("#schedule");
+        const time_table = document.querySelector("#time_table");
 
         let menuNowDate = 0;
         let scheduleNowDate = 0;
+        let timeTableNowDate = 0;
 
         const weatherUrl = "http://api.openweathermap.org/data/2.5/weather?q=daegu&APPID=09c8dfc52b7541d33c528d09a55e2c18&units=metric";
         const menuUrl = `http://kyungwon-server.kro.kr:8080/meals?school_id=7240393&office_code=D10&date=`;
@@ -97,6 +107,17 @@
         const weatherButton = document.querySelector("#weatherButton");
         const menuButton = document.querySelector("#menuButton");
         const scheduleButton = document.querySelector("#scheduleButton");
+        const timeTableButton = document.querySelector("#timeTableButton");
+
+        const time_table_data = [
+            [",,",",,",",,",",,",",,",",,",",,"],//일
+            ["자습","사회","수학","컴그","DB","DB","과학"],//월
+            ["진로","수학","기자","기자","미술","미술","과학"],//화
+            ["과학","컴그","체육","영어","국어","수학","사회"],//수
+            ["자구","자구","국어","DB","체육","과학","영어"],//목
+            ["영어","자구","자구","국어","봉사","동아리",",,"],//금
+            [",,",",,",",,",",,",",,",",,",",,"],//토
+            ];
 
         var xhr= new XMLHttpRequest();
 
@@ -197,7 +218,16 @@
                     getSchedule(scheduleNowDate);
                 }
             } break;
-
+            case "time_table":{
+                console.log("click");
+                if(flag){//true
+                    ++timeTableNowDate;
+                    getTimeTable(timeTableNowDate);
+                } else{//false
+                    --timeTableNowDate;
+                    getTimeTable(timeTableNowDate);
+                }
+            }
         }
     }
 
@@ -277,6 +307,48 @@
         });
     }
 
+    function getNowTimeTable(time){
+        const hour = time.hours;
+        let minute = time.minutes;
+        console.log(hour,minute);
+        minute += hour*60;
+        console.log(minute);
+        let now=1;
+        for(let i =0;i<4;i++){
+            if((60*8+30+(60*i))<minute) now = i+1;
+        }
+        for(let i =0;i<3;i++){
+            // console.log((60*14+10+(60*i)),(60*14+10+(60*i))<minute);
+            if((60*13+10+(60*i))<minute) now = i+5;
+        }
+        // console.log(now);
+        return now;
+    }
+
+    function getTimeTable(add=0){
+        const date = getDate(add);
+        const now = getNowTimeTable(date);
+        const int_day = date.day;
+        const str_day = getDay(int_day);
+        let today_time_table = (time_table_data[int_day]);
+        let tag = `<h1>시간표</h1><h2>(${str_day}요일)</h2><hr /><div id="time_table_box">`;
+        for(let i in today_time_table){
+            tag += 
+            `<div class="time_table_item_box ${(add%7)===0?Number(i)+1===now?"now bold":"":""}">
+                <span>${Number(i)+1}교시</span>:
+                <span>${today_time_table[i]}</span>
+            </div>`;
+        }
+        tag +=  `
+            </div>
+           <div class="change_date_button_box">
+                <button onclick="changeDate(false,'time_table')"><</button>
+                <button onclick="changeDate(true,'time_table')">></button>
+           </div>
+           `;
+        time_table.innerHTML = tag;
+    }
+
     weatherButton.addEventListener("click",e=>{
         getWeather();
     });
@@ -285,6 +357,9 @@
     });
     scheduleButton.addEventListener("click",e=>{
         getSchedule();
+    });
+    timeTableButton.addEventListener("click",e=>{
+        getTimeTable();
     });
 
     function setTime(){
